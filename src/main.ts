@@ -4,8 +4,13 @@ import {
     SystemMessage,
 } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
-import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
+import {
+    CompiledStateGraph,
+    MessagesAnnotation,
+    StateGraph,
+} from "@langchain/langgraph";
 import { loadEnv } from "./utils/loadEnv.ts";
+import { generateGraphPng } from "./utils/visualizeGraph.ts";
 
 // OpenAI chat model
 const model = new ChatOpenAI({
@@ -48,6 +53,9 @@ const app = workflow.compile();
 async function main() {
     // Load environment variables from .env file
     await loadEnv();
+
+    // visualize the graph
+    await generateGraphPng(app);
 
     console.log("\n🤖 Simple Deno + LangGraph + OpenAI Agent");
     console.log("Type 'exit' to quit.\n");

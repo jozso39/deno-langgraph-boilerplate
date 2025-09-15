@@ -15,6 +15,9 @@ rohbot-windows.exe
 # IDE files
 .idea/
 
+# generated graphs
+graph.png
+
 # OS files
 .DS_Store
 Thumbs.db
