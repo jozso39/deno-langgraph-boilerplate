@@ -13,7 +13,6 @@ rohbot-macos
 rohbot-windows.exe
 
 # IDE files
-.vscode/
 .idea/
 
 # OS files

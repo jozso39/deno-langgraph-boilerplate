@@ -1,0 +1,23 @@
+{
+    "deno.enable": true,
+    "deno.enablePaths": [
+        "."
+    ],
+    "deno.lint": true,
+    "typescript.suggest.autoImports": true,
+    "typescript.validate.enable": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    }
+}
