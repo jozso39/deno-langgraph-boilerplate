@@ -5,6 +5,7 @@ import {
 } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
+import { loadEnv } from "./src/utils/loadEnv.ts";
 
 // OpenAI chat model
 const model = new ChatOpenAI({
@@ -45,6 +46,9 @@ const workflow = new StateGraph(MessagesAnnotation)
 const app = workflow.compile();
 
 async function main() {
+    // Load environment variables from .env file
+    await loadEnv();
+
     console.log("\n🤖 Simple Deno + LangGraph + OpenAI Agent");
     console.log("Type 'exit' to quit.\n");
 
