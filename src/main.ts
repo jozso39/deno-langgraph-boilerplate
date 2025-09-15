@@ -5,7 +5,7 @@ import {
 } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
-import { loadEnv } from "./src/utils/loadEnv.ts";
+import { loadEnv } from "./utils/loadEnv.ts";
 
 // OpenAI chat model
 const model = new ChatOpenAI({
