@@ -5,8 +5,7 @@ import {
 } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
-import { loadEnv } from "./utils/loadEnv.ts";
-import { generateGraphPng } from "./utils/visualizeGraph.ts";
+import { generateGraphPng } from "./utils/visualize-graph.ts";
 
 // OpenAI chat model
 const model = new ChatOpenAI({
@@ -34,7 +33,6 @@ async function callModel(state: typeof MessagesAnnotation.State) {
  * Simple conditional logic - always end after model call
  */
 function shouldContinue(_state: typeof MessagesAnnotation.State) {
-    // For this simple example, always end after model response
     return "__end__";
 }
 
@@ -47,10 +45,6 @@ const workflow = new StateGraph(MessagesAnnotation)
 const app = workflow.compile();
 
 async function main() {
-    // Load environment variables from .env file
-    await loadEnv();
-
-    // visualize the graph
     await generateGraphPng(app);
 
     console.log("\n🤖 Simple Deno + LangGraph + OpenAI Agent");
@@ -63,17 +57,12 @@ async function main() {
         if (!input) continue;
         if (input.toLowerCase() === "exit") break;
 
-        // Add user message to state
         messages.push(new HumanMessage(input));
 
         try {
-            // Run the graph with current messages
             const result = await app.invoke({ messages });
 
-            // Update messages with the result
             messages = result.messages;
-
-            // Get the latest AI response
             const lastMessage = messages[messages.length - 1];
             if (lastMessage && typeof lastMessage.content === "string") {
                 console.log("Agent:", lastMessage.content, "\n");

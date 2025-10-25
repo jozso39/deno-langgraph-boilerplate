@@ -6,7 +6,7 @@
         "strict": true
     },
     "tasks": {
-        "main":"deno run -RWNE src/main.ts"
+        "main":"deno run -RWNE --env-file src/main.ts"
     },
     "fmt": {
         "useTabs": false,
