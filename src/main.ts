@@ -7,7 +7,6 @@ import { ChatOpenAI } from "@langchain/openai";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { generateGraphPng } from "./utils/visualize-graph.ts";
 
-// OpenAI chat model
 const model = new ChatOpenAI({
     apiKey: Deno.env.get("OPENAI_API_KEY"),
     model: "gpt-3.5-turbo",
@@ -15,7 +14,6 @@ const model = new ChatOpenAI({
     streaming: true,
 });
 
-// System message for the agent
 const systemMessageText =
     "You are a helpful assistant. Be concise and friendly in your responses.";
 
@@ -36,7 +34,6 @@ function shouldContinue(_state: typeof MessagesAnnotation.State) {
     return "__end__";
 }
 
-// Create the state graph
 const workflow = new StateGraph(MessagesAnnotation)
     .addNode("agent", callModel)
     .addEdge("__start__", "agent")
@@ -60,16 +57,37 @@ async function main() {
         messages.push(new HumanMessage(input));
 
         try {
-            const result = await app.invoke({ messages });
+            console.log("Agent: ");
+            const eventStream = app.streamEvents(
+                { messages },
+                { version: "v2" },
+            );
 
-            messages = result.messages;
-            const lastMessage = messages[messages.length - 1];
-            if (lastMessage && typeof lastMessage.content === "string") {
-                console.log("Agent:", lastMessage.content, "\n");
-            } else {
-                console.log("Agent: [No response]\n");
-                console.log("[DEBUG] Last message:", lastMessage);
-                console.log("[DEBUG] All messages length:", messages.length);
+            let isStreaming = false;
+            let finalMessages: BaseMessage[] = [];
+
+            for await (const event of eventStream) {
+                if (
+                    event.event === "on_chat_model_stream" &&
+                    event.data?.chunk?.content
+                ) {
+                    isStreaming = true;
+                    const token = event.data.chunk.content;
+                    Deno.stdout.writeSync(new TextEncoder().encode(token));
+                }
+                if (
+                    event.event === "on_chain_end" && event.name === "LangGraph"
+                ) {
+                    finalMessages = event.data.output.messages;
+                }
+            }
+            if (isStreaming) {
+                console.log("\n");
+            }
+
+            // Update messages with final state
+            if (finalMessages.length > 0) {
+                messages = finalMessages;
             }
         } catch (error) {
             console.error("Error:", error);
